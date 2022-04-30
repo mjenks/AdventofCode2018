@@ -18,7 +18,7 @@ def parse(puzzle_input):
     return data
     
 def solve(puzzle_data):
-    return 0, 0
+    return sum(puzzle_data), 0
 
 puzzle_path = "input_day1.txt"
 with open(puzzle_path) as f:
