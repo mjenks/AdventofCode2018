@@ -18,7 +18,17 @@ def parse(puzzle_input):
     return data
     
 def solve(puzzle_data):
-    return sum(puzzle_data), 0
+    freq = [0]
+    dup = False
+    i = 0
+    while not dup:
+        cur = freq[-1] + puzzle_data[i%len(puzzle_data)]
+        if cur in freq:
+            dup = True
+            calibrate = cur
+        freq.append(cur)
+        i += 1
+    return sum(puzzle_data), calibrate
 
 puzzle_path = "input_day1.txt"
 with open(puzzle_path) as f:
