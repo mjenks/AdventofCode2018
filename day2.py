@@ -17,13 +17,21 @@ def parse(puzzle_input):
 def solve(puzzle_data):
     double = 0
     triple = 0
+    similar = set()
     for box in puzzle_data:
         counts = Counter(box)
         if 2 in counts.values():
             double += 1
         if 3 in counts.values():
             triple += 1
-    return double*triple, 0
+        for other in puzzle_data:
+            dif = sum(1 for a, b in zip(box, other) if a != b)
+            if dif == 1:
+                similar.add(box)
+                similar.add(other)
+    similar = list(similar)
+    common = [a for a, b in zip(similar[0],similar[1]) if a == b]
+    return double*triple, ''.join(common)
 
 puzzle_path = "input_day2.txt"
 with open(puzzle_path) as f:
