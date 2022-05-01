@@ -31,8 +31,10 @@ def solve(puzzle_data):
     duty = 0
     start = 0
     asleep = {}
+    hour = {}
     for g in guard.keys():
         asleep[g] = 0
+        hour[g] = [0 for i in range(60)]
     for i in range(len(puzzle_data)):
         log = puzzle_data[i]
         minute = log[1]
@@ -46,13 +48,17 @@ def solve(puzzle_data):
             guard[duty].append((start,minute))
             asleep[duty] += minute - start
     guard_chosen = asleep.keys()[asleep.values().index(max(asleep.values()))]
-    hour = [0 for i in range(60)]
-    for sleep in guard[guard_chosen]:
-        start, end = sleep
-        for t in range(start,end):
-            hour[t] += 1
-    min_chosen = hour.index(max(hour))
-    return guard_chosen*min_chosen, asleep
+    freq_sleep = []
+    for gd in guard.keys():
+        for sleep in guard[gd]:
+            start, end = sleep
+            for t in range(start,end):
+                hour[gd][t] += 1
+        freq_sleep.append((gd, max(hour[gd])))
+    min_chosen = hour[guard_chosen].index(max(hour[guard_chosen]))
+    guard2, freq = max(freq_sleep, key = lambda x:x[1])
+    min2 = hour[guard2].index(freq)
+    return guard_chosen*min_chosen, guard2*min2
 
 puzzle_path = "input_day4.txt"
 with open(puzzle_path) as f:
