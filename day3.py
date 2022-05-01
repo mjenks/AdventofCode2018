@@ -23,11 +23,16 @@ def parse(puzzle_input):
 def solve(puzzle_data):
     size = 1000
     cloth = np.zeros((size,size))
+    
     for elf in puzzle_data:
         ident, x, y, w, h = elf
         cloth[x:x+w, y:y+h] += 1
+    for elf in puzzle_data:
+        ident, x, y, w, h = elf
+        if np.all(cloth[x:x+w, y:y+h] == 1):
+            intact = ident
     overlap = np.size(np.where(cloth >= 2)[0])
-    return overlap, 0
+    return overlap, intact[1:]
 
 puzzle_path = "input_day3.txt"
 with open(puzzle_path) as f:
@@ -37,4 +42,4 @@ puzzle_data = parse(puzzle_input)
 solution1, solution2 = solve(puzzle_data)
 
 print(solution1)
-#print(solution2)
+print(solution2)
