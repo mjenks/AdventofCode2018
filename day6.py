@@ -26,10 +26,8 @@ def solve(puzzle_data):
     for y in range(400):
         for x in range(400):
             grid[y][x], dist[y][x] = closest(x,y, puzzle_data)
-    inf = [False for i in puzzle_data]
     edge = set(grid[0]) | set(grid[-1]) | set([a[0] for a in grid]) | set([a[-1] for a in grid])
-    for val in edge:
-        inf[val] = True
+    inf = [i in edge for i in range(len(puzzle_data))]
     size = []
     largest_area = 0
     for i in range(len(puzzle_data)):
