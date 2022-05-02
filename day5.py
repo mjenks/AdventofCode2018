@@ -10,7 +10,24 @@ def parse(puzzle_input):
     return data
     
 def solve(puzzle_data):
-    return 0, 0
+    length = 0
+    polymer = puzzle_data[:]
+    while length != len(polymer):
+        length = len(polymer)
+        new = []
+        i = 0
+        while i < length:
+            if i == length - 1:
+                new.append(polymer[i])
+                i += 1
+            elif polymer[i] - 32 == polymer[i+1] or polymer[i] + 32 == polymer[i+1]:
+                i += 2
+            else:
+                new.append(polymer[i])
+                i += 1
+        polymer = new[:]
+    
+    return length, 0
 
 puzzle_path = "input_day5.txt"
 with open(puzzle_path) as f:
