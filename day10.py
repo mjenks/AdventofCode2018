@@ -43,8 +43,9 @@ def solve(puzzle_data):
             print(t)
             for row in grid:
                 print(''.join(row))
+            message_time = t
 
-    return 0, 0
+    return 0, message_time
 
 puzzle_path = "input_day10.txt"
 with open(puzzle_path) as f:
