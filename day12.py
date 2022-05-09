@@ -56,10 +56,24 @@ def next_gen(pots):
 def solve(puzzle_data):
     pots = list(puzzle_data)
     first_pot = 0
-    for gen in range(20):
+    gen = 0
+    while gen < 500:
+#        print gen, len(pots), pots.count('#'), sum([i + first_pot for i in range(len(pots)) if pots[i] == '#'])
+        if gen == 20:
+            part1 = sum([i + first_pot for i in range(len(pots)) if pots[i] == '#'])
         pots = next_gen(pots)
         first_pot -= 2
-    return sum([i + first_pot for i in range(len(pots)) if pots[i] == '#']), 0
+        while pots[0] == '.':
+            pots = pots[1:]
+            first_pot += 1
+        while pots[-1] == '.':
+            pots.pop()
+        if ''.join(pots) == puzzle_data[:-1]:
+            print "Matches initial state ", gen, first_pot
+        gen += 1
+    form = sum([i + first_pot for i in range(len(pots)) if pots[i] == '#'])
+    form = list(str(form))
+    return part1, int(''.join(form[:2]) + ''.join(['0' for i in range(8)]) + ''.join(form[2:]))
 
 puzzle_path = "input_day12.txt"
 with open(puzzle_path) as f:
