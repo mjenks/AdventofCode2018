@@ -15,6 +15,7 @@ class Cart():
         self.x = x
         self.y = y
         self.facing = facing
+        self.crash = False
     def move(self):
         if self.facing == 3:
             self.x -= 1
@@ -58,9 +59,9 @@ def parse(puzzle_input):
     
 def solve(puzzle_data):
     track, carts = puzzle_data
-    ticks = 0
     collision = False
-    while not collision:
+    carts.sort(key=lambda c: (c.y, c.x))
+    while len([c for c in carts if not c.crash]) > 1:
         for cart in carts:
             cart.move()
             if track[cart.y][cart.x] == '/':
@@ -75,12 +76,17 @@ def solve(puzzle_data):
                     cart.facing = (cart.facing + 1)%4
             elif track[cart.y][cart.x] == '+':
                 cart.turn()
-        ticks += 1
-        locations = [(c.x, c.y) for c in carts]
-        if len(locations) != len(set(locations)):
-            collision = True
-    collision_points = [a for a, b in collections.Counter(locations).items() if b > 1]
-    return collision_points, 0
+            locations = [(c.x, c.y) for c in carts if not c.crash]
+            if len(locations) != len(set(locations)):
+                collision_points = [a for a, b in collections.Counter(locations).items() if b > 1]
+                if not collision:
+                    first = collision_points
+                    collision = True
+                for cart in carts:
+                    if (cart.x,cart.y) in collision_points:
+                        cart.crash = True
+        carts.sort(key=lambda c: (c.y, c.x))
+    return first, [(c.x,c.y) for c in carts if not c.crash]
 
 puzzle_path = "input_day13.txt"
 with open(puzzle_path) as f:
