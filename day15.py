@@ -158,15 +158,22 @@ def attack(unit,enemies):
         grid[target.y][target.x] = '.' #if so remove enemy from grid
     return
     
-def solve(puzzle_data):
+def solve(puzzle_input, inc):
     global grid
+    grid, puzzle_data = parse(puzzle_input)
     all_units = puzzle_data
     goblins = [x for x in all_units if x.race == 'G']
     elves = [x for x in all_units if x.race == 'E']
+    #increase elves attack 
+    for elf in elves:
+        elf.attack += inc
     combat = True
     rounds = 0
     all_units.sort(key=lambda u: (u.y, u.x)) #reduntant but makes sure unit order is correct
     while combat:
+        for elf in elves:
+            if elf.hp <= 0:
+                return solve(puzzle_input, elf.attack - 2)
         for unit in all_units:
             if unit.hp <= 0:
                 continue
@@ -177,17 +184,13 @@ def solve(puzzle_data):
             if len([t for t in target if t.hp > 0]) == 0:
                 combat = False
                 break
-#            print unit.race, unit.y, unit.x
             move(unit,target) #performs the movement or returns if the unit doesn't move or ends its turn
             attack(unit,target) #attacks the lowest hp unit in range or returns if none in range
         all_units.sort(key=lambda u: (u.y, u.x)) #sort all units into reading order to act next round
         if combat: 
             rounds += 1 #only increment rounds if the round completes
-#            print rounds
-#        for row in grid:
-#            print ''.join(row)
     winners_hp = sum([u.hp for u in all_units if u.hp > 0]) #sum of the hp remaining on all living victors
-    return rounds*winners_hp, 0
+    return rounds*winners_hp
 
 puzzle_path = "input_day15.txt"
 #puzzle_path = "day15_ex6.txt"
@@ -195,7 +198,6 @@ with open(puzzle_path) as f:
     puzzle_input = f.readlines()
     
 grid, puzzle_data = parse(puzzle_input)
-solution1, solution2 = solve(puzzle_data)
+solution = solve(puzzle_input, 1)
 
-print(solution1)
-print(solution2)
+print(solution)
