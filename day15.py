@@ -86,7 +86,7 @@ def findNearest(unit, points):
     visited = set()
     visited.add(location[0])
     nearest = []
-    while sum(shortest_routes) == 0 and len(location) > 0 and steps < 1000:
+    while sum(shortest_routes) == 0 and len(location) > 0 and steps < 1000: #1000 covers traversing the whole grid
         steps += 1
         location, visited = step(location, visited)
         for spot in location:
@@ -95,7 +95,7 @@ def findNearest(unit, points):
                 if shortest_routes[index] == 0:
                     shortest_routes[index] = steps
                     nearest.append(spot)
-    if len(nearest) == 0:
+    if len(nearest) == 0: #no path to points exists
         return (unit.x, unit.y)
     else:
         nearest.sort(key=lambda p: (p[1], p[0]))
@@ -108,32 +108,35 @@ def findPath(unit, des):
     visited.add(location[0])
     points = [(unit.x,unit.y-1),(unit.x-1,unit.y),(unit.x+1,unit.y),(unit.x,unit.y+1)]
     found = False
+    choice = []
     while not found:
         steps += 1
         for spot in location:
             if spot in points:
-                choice = spot 
+                choice.append(spot)
                 found = True
-                break
         location, visited = step(location, visited)
-    return choice
+    choice.sort(key=lambda p: (p[1],p[0])) #sort to reading order
+    return choice[0] 
     
 def move(unit, enemies):
     global grid
     enemies = [e for e in enemies if e.hp > 0]
     e_loc = set([(e.x,e.y) for e in enemies])
     adj = set([(unit.x+1,unit.y),(unit.x-1,unit.y),(unit.x,unit.y+1),(unit.x,unit.y-1)])
-    if len(e_loc & adj) != 0:
-        return
+    if len(e_loc & adj) != 0: #checks for enemy aleardy in range
+        return #if found skips move and goes to attack phase
     options = inrange(enemies)
+    if len(options) == 0: #if no open spaces in range of an enemy are available end turn
+        return #moving to attack will end turn if no enemies in range
     nearest = findNearest(unit,options)
-    if nearest == (unit.x,unit.y):
-        return
-    new_x, new_y = findPath(unit,nearest)
+    if nearest == (unit.x,unit.y): #only happens if no path to options found
+        return #goes to attack which ends turn because no enemy in range
+    new_x, new_y = findPath(unit,nearest) 
     grid[unit.y][unit.x] = '.'
-    grid[new_y][new_x] = unit.race
+    grid[new_y][new_x] = unit.race #these 2 lines move the unit on the grid
     unit.x = new_x
-    unit.y = new_y
+    unit.y = new_y #move the unit in the unit class
     return
     
 def attack(unit,enemies):
@@ -146,13 +149,13 @@ def attack(unit,enemies):
         elif e.x == unit.x:
             if e.y == unit.y + 1 or e.y == unit.y - 1:
                 inrange.append(e)
-    if len(inrange) == 0:
+    if len(inrange) == 0: #no enemies in range so no attack happens
         return
-    inrange.sort(key=lambda e: (e.hp, e.y, e.x))
+    inrange.sort(key=lambda e: (e.hp, e.y, e.x)) #sort possible targets by hp then in reading order
     target = inrange[0]
     target.hp -= unit.attack
-    if target.hp <= 0:
-        grid[target.y][target.x] = '.'
+    if target.hp <= 0: #checks if the attack killed the enemy unit
+        grid[target.y][target.x] = '.' #if so remove enemy from grid
     return
     
 def solve(puzzle_data):
@@ -162,6 +165,7 @@ def solve(puzzle_data):
     elves = [x for x in all_units if x.race == 'E']
     combat = True
     rounds = 0
+    all_units.sort(key=lambda u: (u.y, u.x)) #reduntant but makes sure unit order is correct
     while combat:
         for unit in all_units:
             if unit.hp <= 0:
@@ -174,15 +178,15 @@ def solve(puzzle_data):
                 combat = False
                 break
 #            print unit.race, unit.y, unit.x
-            move(unit,target)
-            attack(unit,target)
-        all_units.sort(key=lambda u: (u.y, u.x))
-        if combat:
-            rounds += 1
+            move(unit,target) #performs the movement or returns if the unit doesn't move or ends its turn
+            attack(unit,target) #attacks the lowest hp unit in range or returns if none in range
+        all_units.sort(key=lambda u: (u.y, u.x)) #sort all units into reading order to act next round
+        if combat: 
+            rounds += 1 #only increment rounds if the round completes
 #            print rounds
 #        for row in grid:
 #            print ''.join(row)
-    winners_hp = sum([u.hp for u in all_units if u.hp > 0])
+    winners_hp = sum([u.hp for u in all_units if u.hp > 0]) #sum of the hp remaining on all living victors
     return rounds*winners_hp, 0
 
 puzzle_path = "input_day15.txt"
