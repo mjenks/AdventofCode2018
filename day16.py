@@ -5,7 +5,6 @@ Created on Fri May 20 13:37:14 2022
 @author: mjenks
 """
 
-reg = [0,0,0,0]
 
 def parse(puzzle_input):
     samples = []
@@ -30,74 +29,93 @@ def parse(puzzle_input):
             i += 1
     return samples, test
     
-def addr(a,b):
+def addr(reg,a,b):
     return reg[a]+reg[b]
 
-def addi(a,b):
+def addi(reg,a,b):
     return reg[a]+b
 
-def mulr(a,b):
+def mulr(reg,a,b):
     return reg[a]*reg[b]
 
-def muli(a,b):
+def muli(reg,a,b):
     return reg[a]*b
 
-def banr(a,b):
+def banr(reg,a,b):
     return reg[a]&reg[b]
     
-def bani(a,b):
+def bani(reg,a,b):
     return reg[a]&b
     
-def borr(a,b):
+def borr(reg,a,b):
     return reg[a] | reg[b]
     
-def bori(a,b):
+def bori(reg,a,b):
     return reg[a] | b
     
-def setr(a,b):
+def setr(reg,a,b):
     return reg[a]
     
-def seti(a,b):
+def seti(reg,a,b):
     return a
     
-def gtir(a,b):
+def gtir(reg,a,b):
     if a > reg[b]:
         return 1
     else:
         return 0
         
-def gtri(a,b):
+def gtri(reg,a,b):
     if reg[a] > b:
         return 1
     else:
         return 0
         
-def gtrr(a,b):
+def gtrr(reg,a,b):
     if reg[a] > reg[b]:
         return 1
     else:
         return 0
         
-def eqir(a,b):
+def eqir(reg,a,b):
     if a == reg[b]:
         return 1
     else:
         return 0
 
-def eqri(a,b):
+def eqri(reg,a,b):
     if reg[a] == b:
         return 1
     else:
         return 0
 
-def eqrr(a,b):
+def eqrr(reg,a,b):
     if reg[a] == reg[b]:
         return 1
     else:
         return 0        
         
+def testSample(sample):
+    before, code, after = sample
+    reg = before
+    a = code[1]
+    b = code[2]
+    c = code[3]
+    match = 0
+    opcodes = [addr,addi,mulr,muli,bani,banr,borr,bori,setr,seti,gtir,gtri,gtrr,eqir,eqri,eqrr]
+    for op in opcodes:
+        if op(reg,a,b) == after[c]:
+            match += 1
+    return match
+    
+        
 def solve(puzzle_data):
-    return 0, 0
+    samples, test = puzzle_data
+    count = 0
+    for sample in samples:
+        if testSample(sample) >= 3:
+            count += 1
+    return count, 0
 
 puzzle_path = "input_day16.txt"
 with open(puzzle_path) as f:
