@@ -5,6 +5,8 @@ Created on Fri May 20 13:37:14 2022
 @author: mjenks
 """
 
+reg = [0,0,0,0]
+
 def parse(puzzle_input):
     samples = []
     test = []
@@ -28,6 +30,72 @@ def parse(puzzle_input):
             i += 1
     return samples, test
     
+def addr(a,b):
+    return reg[a]+reg[b]
+
+def addi(a,b):
+    return reg[a]+b
+
+def mulr(a,b):
+    return reg[a]*reg[b]
+
+def muli(a,b):
+    return reg[a]*b
+
+def banr(a,b):
+    return reg[a]&reg[b]
+    
+def bani(a,b):
+    return reg[a]&b
+    
+def borr(a,b):
+    return reg[a] | reg[b]
+    
+def bori(a,b):
+    return reg[a] | b
+    
+def setr(a,b):
+    return reg[a]
+    
+def seti(a,b):
+    return a
+    
+def gtir(a,b):
+    if a > reg[b]:
+        return 1
+    else:
+        return 0
+        
+def gtri(a,b):
+    if reg[a] > b:
+        return 1
+    else:
+        return 0
+        
+def gtrr(a,b):
+    if reg[a] > reg[b]:
+        return 1
+    else:
+        return 0
+        
+def eqir(a,b):
+    if a == reg[b]:
+        return 1
+    else:
+        return 0
+
+def eqri(a,b):
+    if reg[a] == b:
+        return 1
+    else:
+        return 0
+
+def eqrr(a,b):
+    if reg[a] == reg[b]:
+        return 1
+    else:
+        return 0        
+        
 def solve(puzzle_data):
     return 0, 0
 
