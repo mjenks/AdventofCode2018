@@ -5,6 +5,22 @@ Created on Fri May 20 13:37:14 2022
 @author: mjenks
 """
 
+codes = {0:set(),
+         1:set(),
+         2:set(),
+         3:set(),
+         4:set(),
+         5:set(),
+         6:set(),
+         7:set(),
+         8:set(),
+         9:set(),
+         10:set(),
+         11:set(),
+         12:set(),
+         13:set(),
+         14:set(),
+         15:set()}
 
 def parse(puzzle_input):
     samples = []
@@ -98,6 +114,7 @@ def eqrr(reg,a,b):
 def testSample(sample):
     before, code, after = sample
     reg = before
+    num = code[0]
     a = code[1]
     b = code[2]
     c = code[3]
@@ -105,17 +122,32 @@ def testSample(sample):
     opcodes = [addr,addi,mulr,muli,bani,banr,borr,bori,setr,seti,gtir,gtri,gtrr,eqir,eqri,eqrr]
     for op in opcodes:
         if op(reg,a,b) == after[c]:
+            codes[num].add(op)
             match += 1
-    return match
+    return match >= 3
     
-        
 def solve(puzzle_data):
     samples, test = puzzle_data
-    count = 0
-    for sample in samples:
-        if testSample(sample) >= 3:
-            count += 1
-    return count, 0
+    count = sum([testSample(s) for s in samples])
+    found = [3] #start with 3 because it only has one option
+    #finds the number code for each opcode
+    for x in found:
+        for code in codes:
+            if code == x:
+                continue
+            if len(codes[code]) == 1:
+                continue
+            else:
+                codes[code] = codes[code] - codes[x]
+                if len(codes[code]) == 1:
+                    found.append(code)
+    #make codes a dictionary of functions rather than sets of functions
+    for code in codes:
+        codes[code] = next(iter(codes[code]))
+    reg = [0,0,0,0]
+    for line in test:
+        reg[line[3]] = codes[line[0]](reg,line[1],line[2])
+    return count, reg[0]
 
 puzzle_path = "input_day16.txt"
 with open(puzzle_path) as f:
