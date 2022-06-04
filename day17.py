@@ -114,7 +114,7 @@ def solve(puzzle_data):
         prior = row
     filled = sum([sum([x == '~' for x in row]) for row in grid[y_min:y_max]])
     touched = sum([sum([x == '|' for x in row]) for row in grid[y_min:y_max]])
-    return filled+touched, 0
+    return filled+touched, filled
 
 puzzle_path = "input_day17.txt"
 with open(puzzle_path) as f:
