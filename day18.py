@@ -55,13 +55,24 @@ def morph(grid):
     
 def solve(puzzle_data):
     grid = puzzle_data
+    maps = []
     time = 0
     while time < 10:
+        maps.append(grid)
         grid = morph(grid)
         time += 1
     wooded = sum([sum([1 for x in row if x == '|']) for row in grid])
     lumber = sum([sum([1 for x in row if x == '#']) for row in grid])
-    return wooded*lumber, 0
+    while time < 507: #508 is the same as 480 and repeats from there
+        maps.append(grid)
+        grid = morph(grid)
+        time += 1            
+    cycle = (1000000000 - 480)%28
+    grid_1b = maps[480+cycle]
+    wooded2 = sum([sum([1 for x in row if x == '|']) for row in grid_1b])
+    lumber2 = sum([sum([1 for x in row if x == '#']) for row in grid_1b])
+    
+    return wooded*lumber, wooded2*lumber2
 
 puzzle_path = "input_day18.txt"
 with open(puzzle_path) as f:
