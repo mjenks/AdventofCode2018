@@ -2,7 +2,7 @@
 """
 Created on Thu Jun 02 14:43:15 2022
 
-@author: rikku
+@author: mjenks
 """
 
 def parse(puzzle_input):
