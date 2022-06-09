@@ -87,23 +87,35 @@ def eqrr(reg,a,b):
         return 0  
     
 def solve(puzzle_data):
-    reg = [0,0,0,0,0,0]
+    reg = [1,0,0,0,0,0]
     point, code = puzzle_data
     i = 0
     while i >= 0 and i < len(code):
         reg[point] = i
         inst = code[i]
-        reg[inst[1]] = eval(inst[0])
+        if i == 11:
+            while reg[3] <= reg[5]:
+                if reg[3] * reg[2] == reg[5]:
+                    reg[0] += reg[2]
+                reg[3] += 1
+            reg[4] = 1
+        elif i == 15:
+            while reg[2] < reg[5]:
+                if reg[5] % reg[2] == 0:
+                    reg[0] += reg[2]
+                reg[2] += 1
+            reg[inst[1]] = eval(inst[0]) 
+        else:
+            reg[inst[1]] = eval(inst[0])
         i = reg[point]
         i += 1
-    return reg[0], 0
+    return reg[0]
 
 puzzle_path = "input_day19.txt"
 with open(puzzle_path) as f:
     puzzle_input = f.readlines()
     
 puzzle_data = parse(puzzle_input)
-solution1, solution2 = solve(puzzle_data)
+solution = solve(puzzle_data)
 
-print(solution1)
-print(solution2)
+print(solution)
