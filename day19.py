@@ -13,10 +13,11 @@ def parse(puzzle_input):
             point = int(line[-1])
         else:
             com = line[0]
-            a = int(line[1])
-            b = int(line[2])
+            a = line[1]
+            b = line[2]
             c = int(line[3])
-            data.append([com,a,b,c])
+            inst = com + "(reg," + a + ',' + b + ')'
+            data.append([inst,c])
     return point, data
     
 def addr(reg,a,b):
@@ -87,7 +88,15 @@ def eqrr(reg,a,b):
     
 def solve(puzzle_data):
     reg = [0,0,0,0,0,0]
-    return 0, 0
+    point, code = puzzle_data
+    i = 0
+    while i >= 0 and i < len(code):
+        reg[point] = i
+        inst = code[i]
+        reg[inst[1]] = eval(inst[0])
+        i = reg[point]
+        i += 1
+    return reg[0], 0
 
 puzzle_path = "input_day19.txt"
 with open(puzzle_path) as f:
